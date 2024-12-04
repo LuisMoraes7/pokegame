@@ -8,7 +8,13 @@ export default {
   ],
   theme: {
     extend: {
+      translate: {
+        '5px': '5px',
+        '-2px': '-2px',
+        
+      },
       colors: {
+        customFooter: "rgb(20, 20, 20)",
         background: "var(--background)",
         foreground: "var(--foreground)",
       },

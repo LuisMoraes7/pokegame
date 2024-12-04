@@ -1,101 +1,189 @@
-import Image from "next/image";
+"use client";
+import { useEffect, useState } from "react";
+import { SearchBar } from "../components/searchBar";
+import { RenderPokemon } from "@/components/renderPokemon";
+import "./globals.css";
+import { Footer } from "@/components/footer";
+interface type {
+  name: string;
+  url: string;
+}
+interface types {
+  slot: number;
+  type: type;
+}
+export interface Pokestyle {
+  name: string;
+  photo: string;
+  types: Array<types>;
+  color: string;
+  height: number;
+  habitat: string;
+}
+
+export interface PokeCard {
+  name: string;
+  photo: string;
+}
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const handleValidation = (isValid: boolean) => {
+    setTimeout(() => {
+      setSucess(isValid);
+    }, 0);
+  };
+  const [randomPokemon, setRandomPokemon] = useState<Pokestyle>();
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const [data, setData] = useState<Pokestyle[]>();
+
+  const [dataToSearch, setDataToSearch] = useState<PokeCard[]>([]);
+
+  const [cardOriginal, setCardOriginal] = useState<PokeCard[]>([]);
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch(
+        `https://luismoraes7.github.io/Testes/pokemons.json`
+      );
+      if (!response.ok) {
+        throw new Error("Erro na requisição");
+      }
+      const result = await response.json();
+      setData(result);
+      const pokemonsNames: PokeCard[] = result.map((pokemon: Pokestyle) => ({
+        name: pokemon.name,
+        photo: pokemon.photo,
+      }));
+      setDataToSearch(pokemonsNames);
+      setCardOriginal(pokemonsNames);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const [sucess, setSucess] = useState(false);
+
+  function catchRandomPokemon() {
+    if (data) {
+      const randomIndex = Math.floor(Math.random() * data?.length);
+      setRandomPokemon(data[randomIndex]);
+    }
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const [counter, setCounter] = useState(0);
+  const [selectedPokemon, setSelectedPokemon] = useState<string | null>(null);
+  const [pokemonList, setPokemonList] = useState<string[]>([]);
+  const handlePokemonClick = (name: string) => {
+    if (randomPokemon) {
+      setSelectedPokemon(name);
+      setPokemonList((prevList) => [...prevList, name]);
+      setDataToSearch((prevData) => prevData.filter((p) => p.name !== name));
+      setCounter(counter + 1);
+    } else {
+      return alert("Selecione um Pokemon primeiro!");
+    }
+  };
+
+  const discoverPokemon = (pokeName: string): Pokestyle | string => {
+    if (data !== undefined) {
+      const pokemon = data.find(
+        (p) => p.name.toLowerCase() === pokeName.toLowerCase()
+      );
+      if (pokemon) {
+        return pokemon;
+      } else {
+        return "none";
+      }
+    } else {
+      return "none";
+    }
+  };
+
+  function handleUpdate() {
+    setSucess(false);
+    setSelectedPokemon(null);
+    setRandomPokemon(undefined);
+    setCounter(0);
+    setPokemonList([]);
+    setDataToSearch(cardOriginal);
+  }
+
+  return (
+    <div className="mt-6 text-center">
+      {data && randomPokemon ? (
+        <div>
+          {sucess ? (
+            <div>
+              <p className="text-black">Parabéns! Você acertou.</p>
+            </div>
+          ) : (
+            <h1 className="text-black">Escreva o nome do Pokemon (seu palpite!)</h1>
+          )}
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      ) : (
+        <div>
+          <p className="text-black">Gere o Pokemon!</p>
+          <button onClick={catchRandomPokemon} className="bg-red-900 text-black">
+            Gerar pokemon aleatório
+          </button>
+        </div>
+      )}
+      {data ? (
+        <div>
+          {sucess ? (
+            <div>
+              {selectedPokemon ? (
+                <div className="text-center">
+                  <RenderPokemon
+                    onValidate={handleValidation}
+                    pokemon={discoverPokemon(selectedPokemon)}
+                    realPokemon={randomPokemon}
+                  ></RenderPokemon>
+                  <div className="mt-8 text-black">
+                    <p>Número de tentativas: {counter}</p>
+                    <p>Deseja jogar de novo? </p>
+                    <button
+                      onClick={handleUpdate}
+                      className="bg-green-800 p-2 rounded hover:bg-green-400 text-black"
+                    >
+                      Sim
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-black">Pokemon não selecionado</p>
+              )}
+            </div>
+          ) : (
+            <div className="mt-4">
+              <SearchBar
+                pokemon={dataToSearch}
+                onPokemonClick={handlePokemonClick}
+              />
+              {selectedPokemon ? (
+                <div>
+                  {pokemonList.map((pokemon, index) => (
+                    <RenderPokemon
+                      onValidate={handleValidation}
+                      pokemon={discoverPokemon(pokemon)}
+                      key={index}
+                      realPokemon={randomPokemon}
+                    ></RenderPokemon>
+                  ))}
+                </div>
+              ) : (
+                <div></div>
+              )}
+            </div>
+          )}
+        </div>
+      ) : (
+        <p>Carregando...</p>
+      )}
+      <Footer></Footer>
     </div>
   );
 }
