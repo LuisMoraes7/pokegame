@@ -1,5 +1,5 @@
 import { Pokestyle } from "@/app/page";
-import { FunctionComponent, useState } from "react";
+import { FunctionComponent} from "react";
 import Image from "next/image";
 import setaBaixo from "@/assets/setabaixo.png"
 import setaCima from "@/assets/setacima.png"

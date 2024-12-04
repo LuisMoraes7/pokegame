@@ -1,10 +1,5 @@
-import { useEffect, useState } from "react";
-import { PokeCard, Pokestyle } from "../app/page";
-
-interface pokeSearch{
-  name: string,
-  photo: string
-}
+import { useState } from "react";
+import { PokeCard } from "../app/page";
 
 export function capitalizeFirstLetter(val: string) {
   return String(val).charAt(0).toUpperCase() + String(val).slice(1);
