@@ -83,7 +83,7 @@ export default function Home() {
       setDataToSearch((prevData) => prevData.filter((p) => p.name !== name));
       setCounter(counter + 1);
     } else {
-      return alert("Selecione um Pokemon primeiro!");
+      return alert("Gere um Pokemon primeiro!");
     }
   };
 
@@ -125,7 +125,7 @@ export default function Home() {
         </div>
       ) : (
         <div>
-          <p className="text-black">Gere o Pokemon!</p>
+          <p className="text-black">Quer adivinhar um pokemon? Gere o Pokemon primeiro!</p>
           <button onClick={catchRandomPokemon} className="bg-red-900 text-black">
             Gerar pokemon aleatório
           </button>
