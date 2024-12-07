@@ -14,7 +14,7 @@ export const SearchBar = (
     return(
         <div className="flex justify-center flex-col items-center">
           <input 
-          className="text-red-600 w-52"
+          className="text-red-600 w-52 border border-black rounded"
           type="text" 
           placeholder="Nome do Pokemon"
           value={query}
@@ -26,7 +26,7 @@ export const SearchBar = (
               <ul>
                 {filterData.map((pokemon,index) => (
                   <li key={index} >
-                    <button onClick={(e) => onPokemonClick(pokemon.name)} className="flex bg-white w-52 items-center justify-evenly border border-red-600">
+                    <button onClick={(e) => onPokemonClick(pokemon.name)} className="flex bg-white w-52 items-center justify-evenly border border-black rounded">
                       <img src={pokemon.photo} alt="" className="w-7"/>
                       <p className="text-black ">{capitalizeFirstLetter(pokemon.name)}</p>
                     </button>

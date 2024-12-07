@@ -27,17 +27,22 @@ export interface PokeCard {
 }
 
 export default function Home() {
+  //variavel que obtem a resposta do componente renderPokemon se o usuario descobriu ou nao o pokemon aleatorio.
   const handleValidation = (isValid: boolean) => {
     setTimeout(() => {
       setSucess(isValid);
     }, 0);
   };
+  //guarda o pokemon aleatorio
   const [randomPokemon, setRandomPokemon] = useState<Pokestyle>();
 
+  //guarda todos os pokemons
   const [data, setData] = useState<Pokestyle[]>();
 
+  //lista MUTAVEL de pokemons que é mudada a cada click do usuario (que remove um pokemon da lista)
   const [dataToSearch, setDataToSearch] = useState<PokeCard[]>([]);
 
+  //lista original de card de Pokemons (que serao renderizadas na busca a cada fim de tentativa) imutavel
   const [cardOriginal, setCardOriginal] = useState<PokeCard[]>([]);
 
   const fetchData = async () => {
@@ -60,8 +65,10 @@ export default function Home() {
       console.log(error);
     }
   };
+  //variavel booleana que guarda se o usuario acertou ou nao o pokemon
   const [sucess, setSucess] = useState(false);
 
+  //gera um pokemon random
   function catchRandomPokemon() {
     if (data) {
       const randomIndex = Math.floor(Math.random() * data?.length);
@@ -73,13 +80,18 @@ export default function Home() {
     fetchData();
   }, []);
 
+  //contador para o numero de tentativas do usuario
   const [counter, setCounter] = useState(0);
+  //entrara na pokemonList
   const [selectedPokemon, setSelectedPokemon] = useState<string | null>(null);
+  //variavel que sera renderizada em tela
   const [pokemonList, setPokemonList] = useState<string[]>([]);
   const handlePokemonClick = (name: string) => {
     if (randomPokemon) {
       setSelectedPokemon(name);
+      //adiciona o pokemon numa lista para ela ser renderizada em tela
       setPokemonList((prevList) => [...prevList, name]);
+      //retira o nome do pokemon da busca quando clicado
       setDataToSearch((prevData) => prevData.filter((p) => p.name !== name));
       setCounter(counter + 1);
     } else {
@@ -87,6 +99,7 @@ export default function Home() {
     }
   };
 
+  //funcao que obtem o nome do pokemon e converte em um objeto que esta dentro de data
   const discoverPokemon = (pokeName: string): Pokestyle | string => {
     if (data !== undefined) {
       const pokemon = data.find(
@@ -102,6 +115,7 @@ export default function Home() {
     }
   };
 
+  //ao apertar no botao de adivinhar de novo
   function handleUpdate() {
     setSucess(false);
     setSelectedPokemon(null);
@@ -125,8 +139,8 @@ export default function Home() {
         </div>
       ) : (
         <div>
-          <p className="text-black">Quer adivinhar um pokemon? Gere o Pokemon primeiro!</p>
-          <button onClick={catchRandomPokemon} className="bg-red-900 text-black">
+          <p className="text-black">Quer adivinhar um pokemon? Gere o Pokemon aleatório primeiro clicando no botão!</p>
+          <button onClick={catchRandomPokemon} className="bg-red-900 p-1 border border-black rounded text-white hover:bg-red-700 hover:text-black">
             Gerar pokemon aleatório
           </button>
         </div>
