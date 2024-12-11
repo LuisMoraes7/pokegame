@@ -48,7 +48,7 @@ export default function Home() {
   const fetchData = async () => {
     try {
       const response = await fetch(
-        `https://luismoraes7.github.io/Testes/pokemons.json`
+        `https://luismoraes7.github.io/myself/pokemons.json`
       );
       if (!response.ok) {
         throw new Error("Erro na requisição");
